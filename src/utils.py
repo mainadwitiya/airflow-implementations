@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+from logger import logger
+
 
 def reduce_memory_usage(df, verbose=True):
     numerics = ["int8", "int16", "int32", "int64", "float16", "float32", "float64"]
@@ -34,9 +36,22 @@ def reduce_memory_usage(df, verbose=True):
                     df[col] = df[col].astype(np.float64)
     end_mem = df.memory_usage().sum() / 1024 ** 2
     if verbose:
-        print(
-            "Mem. usage decreased to {:.2f} Mb ({:.1f}% reduction)".format(
+        logger.info(
+            "Mem. usage decreased to  {:.2f} Mb ({:.1f}% reduction)".format(
                 end_mem, 100 * (start_mem - end_mem) / start_mem
             )
         )
     return df
+
+
+def determine_usecase_type(usecase_id: int) -> str:
+    problem_type = ""
+    if usecase_id == 1:
+        problem_type = "binary classification"
+    elif usecase_id == 2:
+        problem_type = "multiclass classification"
+    else:
+        logger.info(
+            "usecase type error: you entered {usecase_id} : available options are 1: for binary classification 2: for multiclass"
+        )
+    return problem_type
